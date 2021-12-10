@@ -1,4 +1,13 @@
-def training(model, train_loader, max_epoch, criterion, device):
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+from sklearn.metrics import fbeta_score
+
+import numpy as np
+
+
+def training(model, train_loader, max_epoch, criterion, optimizer, device):
 
     loss_log = []
     score_log = []
