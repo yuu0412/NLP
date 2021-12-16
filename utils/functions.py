@@ -67,13 +67,11 @@ def timer(name):
     print(f'[{name}] done in {time.time() - t0:.0f} s')
 
 
-def init_logger(name):
-    logger = logging.getLogger(name)
+def init_logger(path):
+    logger = logging.getLogger(path)
     logger.setLevel(logging.INFO)
 
-    handler1 = logging.FileHandler(f'output/logs/{name}.log')
+    handler1 = logging.FileHandler(f'{path}.log')
     logger.addHandler(handler1)
-    handler2 = logging.StreamHandler(sys.stdout)
-    logger.addHandler(handler2)
 
     return logger

@@ -1,0 +1,6 @@
+__pycache__
+.ipynb_checkpoints
+.idea/
+outputs/
+data/
+4.0

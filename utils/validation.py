@@ -1,8 +1,10 @@
 from sklearn.metrics import fbeta_score
+import torch
+import numpy as np
 
-def evaluation(model, val_loader, criterion, device):
+def evaluation(model, val_loader, criterion, eval_method, device, logger):
     losses = []
-
+    model.eval()
     for n, batch in enumerate(val_loader):
         input_ids, attention_mask, labels = batch
         input_ids = input_ids.to(device)
@@ -11,6 +13,8 @@ def evaluation(model, val_loader, criterion, device):
 
         with torch.no_grad():
             outputs = model(input_ids, attention_mask)
+            loss = criterion(outputs, labels)
+            losses.append(loss.item())
 
         border = 0.023856671381423857
         y_true = labels.cpu().detach().numpy()
@@ -23,7 +27,8 @@ def evaluation(model, val_loader, criterion, device):
             y_preds = y_pred
             y_trues = y_true
 
+    loss_average = sum(losses) / len(losses)
     # すべての変換が終わってからf_betascoreを計算する
-    score = fbeta_score(y_trues, y_preds, average="binary", beta=7.0)
+    score = eval_method(y_trues, y_preds, average="binary", beta=7.0)
     
-    return losses, score
+    return loss_average, score

@@ -2,9 +2,10 @@ from utils.functions import EarlyStopping
 from utils.train import training
 from utils.validation import evaluation
 
-def run_fold(max_epochs, model, train_loader, val_loader, criterion, optimizer, device, logger):
+def run_fold(max_epochs, model, train_loader, val_loader, criterion, optimizer, eval_method, device, logger):
 
-    early_stopping = EarlyStopping(patience=5, verbose=False, delta=0, path=+'output/weights/checkpoint.pt', trace_func=logger.info)
+    model.to(device)
+    early_stopping = EarlyStopping(patience=5, verbose=False, delta=0, path='checkpoint.pt', trace_func=logger.info)
     train_losses = []
     train_scores = []
     val_losses = []
@@ -16,7 +17,7 @@ def run_fold(max_epochs, model, train_loader, val_loader, criterion, optimizer, 
         #        train         #
         ########################
         logger.info('------------- start of training ------------')
-        train_loss, train_score = training(model, train_loader, criterion, optimizer, device, logger)
+        train_loss, train_score = training(model, train_loader, criterion, optimizer, eval_method, device, logger)
         train_losses.append(train_loss)
         train_scores.append(train_score)
 
@@ -24,7 +25,7 @@ def run_fold(max_epochs, model, train_loader, val_loader, criterion, optimizer, 
         #      evaluation      #
         ########################
         logger.info('------------- start of evaluation ------------')
-        val_loss, val_score = evaluation(model, val_loader, criterion, device)
+        val_loss, val_score = evaluation(model, val_loader, criterion, eval_method, device, logger)
         val_losses.append(val_loss)
         val_scores.append(val_score)
 
@@ -38,5 +39,6 @@ def run_fold(max_epochs, model, train_loader, val_loader, criterion, optimizer, 
         early_stopping(val_loss, model)
         if early_stopping.early_stop:
             logger.info("early stopping is adopted.")
+            break
 
     return None

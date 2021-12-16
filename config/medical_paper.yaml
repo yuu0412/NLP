@@ -1,0 +1,16 @@
+model:
+  name: "microsoft/BiomedNLP-PubMedBERT-base-uncased-abstract"
+  num_labels: 1
+
+criterion:
+  name: "BCELoss"
+
+optimizer:
+  name: "Adam"
+  lr: 2e-5
+
+train_loader:
+  batch_size: 16
+
+val_loader:
+  batch_size: 64
